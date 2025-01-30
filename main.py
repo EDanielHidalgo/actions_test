@@ -7,5 +7,6 @@ def return_success():
 
 
 if __name__ == '__main__':
-    # return_success()
-    return_failure()
+    result = return_failure()
+
+    exit(1) if result else exit(0)
