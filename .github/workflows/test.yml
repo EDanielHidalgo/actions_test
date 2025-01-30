@@ -19,4 +19,9 @@ jobs:
         run: docker build -t gh_action_test .
 
       - name: Run container
+        id: run_test
         run: docker run gh_action_test
+
+      - name: Check results
+        if: steps.run_test.outcome != 'success'
+        run: exit 1
