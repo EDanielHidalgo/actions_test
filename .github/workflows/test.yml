@@ -8,8 +8,8 @@ on:
 jobs:
   build:
     runs-on: self-hosted 
-    container:
-      image: gh_action_test
+    # container:
+    #   image: gh_action_test
 
     steps:
       - name: Checkout code
