@@ -17,3 +17,6 @@ jobs:
 
       - name: Build run environment
         run: docker build -t gh_action_test .
+
+      - name: Run container
+        run: docker run gh_action_test
