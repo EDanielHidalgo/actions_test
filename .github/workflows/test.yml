@@ -42,7 +42,10 @@ jobs:
 
           if [[ "${{ steps.check_server_container.outputs.webserver_container_exists }}" == 'true' ]]; then
           # if [[ "${{ env.HEALTH_CHECKER_EXISTS }}" == 'true' ]]; then
+            echo "Deleting webserver"
             docker stop webserver && docker rm webserver
+          else
+            echo "Webserver does not exist"
           fi
 
       # - name: Web server container exists
