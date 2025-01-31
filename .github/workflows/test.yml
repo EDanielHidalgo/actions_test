@@ -64,7 +64,7 @@ jobs:
 
   build-python-image:
     runs-on: self-hosted
-    needs: [get-source, destroy-containers, build-network]
+    needs: [get-source, build-network]
     steps:
       - name: Build Python Docker image
         working-directory: ./app
@@ -72,7 +72,7 @@ jobs:
 
   build-webserver-image:
     runs-on: self-hosted
-    needs: [get-source, destroy-containers, build-network]
+    needs: [get-source, build-network]
     steps:
       - name: Build nginx Docker image
         working-directory: ./web_server
