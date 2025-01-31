@@ -32,7 +32,7 @@ jobs:
 
   get-source:
     runs-on: self-hosted 
-    meeds: [reset-health-checker, reset-webserver]
+    needs: [reset-health-checker, reset-webserver]
 
     steps:
       - name: Checkout code
