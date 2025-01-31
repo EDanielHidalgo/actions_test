@@ -17,11 +17,21 @@ jobs:
     runs-on: self-hosted 
 
     steps:
-      # - name: Destroy health check container
-      #   run: docker stop health_checker && docker rm health_checker
+      - name: Web server container exists
+        id: webserver_exists
+        run: ./check_server_container.sh
 
+      - name: Health checker container exists
+        id: health_checker_exists
+        run: ./check_health_check_container.sh
+
+        if: steps.webserver_exists.outputs.exists == 'true'
       - name: Destroy webserver container
         run: docker stop webserver && docker rm webserver
+
+        if: steps.health_checker_exists.outputs.exists == 'true'
+      - name: Destroy health checker container
+        run: docker stop server_health_checker && docker rm server_health_checker
 
   build-network:
     runs-on: self-hosted
