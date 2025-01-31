@@ -1,9 +1,13 @@
-FROM ubuntu:latest
+FROM ubuntu:latest AS terraform-builder
 
-WORKDIR /app
+WORKDIR /terraform
 
-RUN apt-get update && apt-get install -y python3.12 python3.12-venv && rm -rf /var/lib/apt/lists/*
-RUN python3.12 -m venv .venv
+# WORKDIR /app
+
+RUN apt-get update && apt-get install -y python3.12 && rm -rf /var/lib/apt/lists/*
+
+# RUN apt-get update && apt-get install -y python3.12 python3.12-venv && rm -rf /var/lib/apt/lists/*
+# RUN python3.12 -m venv .venv
 # RUN source .venv/bin/activate
 
 COPY . .

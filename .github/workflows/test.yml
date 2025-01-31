@@ -6,22 +6,30 @@ on:
       - main
 
 jobs:
-  build:
+  get-source:
     runs-on: self-hosted 
-    # container:
-    #   image: gh_action_test
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Build run environment
-        run: docker build -t gh_action_test .
+  build-python-image:
+    runs-on: self-hosted
+    needs: get-source
+    steps:
+      - name: Build Python Docker image
+        run: docker build -t gh_action_test . -f ./app/Dockerfile
 
-      - name: Run container
-        id: run_test
-        run: docker run gh_action_test
-
-      - name: Check results
-        if: steps.run_test.outcome != 'success'
-        run: exit 1
+  build-webserver-image:
+    runs-on: self-hosted
+    needs: get-source
+    steps:
+      - name: Build nginx Docker image
+        run: docker build -t gh_action_test . -f ./web_server/Dockerfile
+      # - name: Run container
+      #   id: run_test
+      #   run: docker run gh_action_test
+      #
+      # - name: Check results
+      #   if: steps.run_test.outcome != 'success'
+      #   run: exit 1
