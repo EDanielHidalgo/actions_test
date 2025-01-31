@@ -13,9 +13,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+  build-network:
+    runs-on: self-hosted
+    # needs: [build-python-image, build-webserver-image]
+
+    steps:
+      - name: Make script executable
+        id: network_check
+        run: chmod +x docker_network_exists.sh
+
+      - name: Check if network exists
+        run: ./docker_network_exists.sh
+
+      - name: Create Docker network
+        if: steps.network_check.outputs.exists == 'false'
+        run: docker network create python-ngnix-network
+
+
   build-python-image:
     runs-on: self-hosted
-    needs: get-source
+    needs: [get-source, build-network]
     steps:
       - name: Build Python Docker image
         working-directory: ./app
@@ -23,23 +40,35 @@ jobs:
 
   build-webserver-image:
     runs-on: self-hosted
-    needs: get-source
+    needs: [get-source, build-network]
     steps:
       - name: Build nginx Docker image
         working-directory: ./web_server
         run: docker build -t web_server .
 
-  build-network:
-    runs-on: self-hosted
-    needs: [build-python-image, build-webserver-image]
-
-    steps:
-      - name: Build Docker network
-        run: docker network create python-ngnix-network
+  # check-for-network:
+  #   runs-on: self-hosted
+  #   needs: [build-python-image, build-webserver-image]
+  #
+  #   steps:
+  #     - name: Make script executable
+  #       id: network_check
+  #       run: chmod +x docker_network_exists.sh
+  #
+  #     - name: Check if network exists
+  #       run: ./docker_network_exists.sh
+  #
+  # build-network:
+  #   runs-on: self-hosted
+  #   needs: [check-for-network]
+  #
+  #   steps:
+  #     - name: Build Docker network
+  #       run: docker network create python-ngnix-network
 
   run-webserver:
     runs-on: self-hosted
-    needs: build-network
+    needs: build-webserver-image
 
     steps:
       - name: Run webserver
