@@ -86,9 +86,9 @@ jobs:
         id: check-result
         run: |
           if [ $? -ne 0 ]; then
-          echo "Health check failed."
-          exit 1
-        fi
+            echo "Health check failed."
+            exit 1
+          fi
 
       - name: Merge app code on success
         if: ${{ steps.check-result.outcome == 'success' }}
