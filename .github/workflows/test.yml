@@ -6,14 +6,19 @@ on:
       - main
 
 jobs:
-  get-source:
+  reset-health-checker:
     runs-on: self-hosted 
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Health checker container exists
+        id: health_checker_exists
+        run: chmod +x check_health_check_container.sh && ./check_health_check_container.sh
 
-  destroy-containers:
+        if: steps.health_checker_exists.outputs.exists == 'true'
+      - name: Destroy health checker container
+        run: docker stop server_health_checker && docker rm server_health_checker
+
+  reset-webserver:
     runs-on: self-hosted 
 
     steps:
@@ -21,20 +26,23 @@ jobs:
         id: webserver_exists
         run: chmod +x check_server_container.sh && ./check_server_container.sh
 
-      - name: Health checker container exists
-        id: health_checker_exists
-        run: chmod +x check_health_check_container.sh && ./check_health_check_container.sh
-
         if: steps.webserver_exists.outputs.exists == 'true'
       - name: Destroy webserver container
         run: docker stop webserver && docker rm webserver
 
-        if: steps.health_checker_exists.outputs.exists == 'true'
-      - name: Destroy health checker container
-        run: docker stop server_health_checker && docker rm server_health_checker
+  get-source:
+    runs-on: self-hosted 
+    meeds: [reset-health-checker, reset-webserver]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+  reset-containers:
 
   build-network:
     runs-on: self-hosted
+    meeds: [reset-health-checker, reset-webserver]
 
     steps:
       - name: Make script executable
