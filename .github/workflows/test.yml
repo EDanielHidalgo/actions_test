@@ -17,20 +17,17 @@ jobs:
     runs-on: self-hosted
     needs: get-source
     steps:
-      - name: Set app working directory
-        working-directory: /app
-
       - name: Build Python Docker image
+        working-directory: /app
         run: docker build -t gh_action_test . -f ./app/Dockerfile
 
   build-webserver-image:
     runs-on: self-hosted
     needs: get-source
     steps:
-      - name: Set web server working directory
+      - name: Build nginx Docker image
         working-directory: /web_server
 
-      - name: Build nginx Docker image
         run: docker build -t gh_action_test . -f ./web_server/Dockerfile
 
       # - name: Run container
