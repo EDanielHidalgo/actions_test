@@ -54,7 +54,7 @@ jobs:
 
   build-webserver-image:
     runs-on: self-hosted
-    needs: [get-source, build-network]
+    needs: [get-source, destroy-containers, build-network]
     steps:
       - name: Build nginx Docker image
         working-directory: ./web_server
@@ -86,7 +86,7 @@ jobs:
 
     steps:
       - name: Run webserver
-        run: docker run --name webserver --network python-ngnix-network web_server
+        run: docker run -d --name webserver --network python-ngnix-network web_server
 
   run-health-check:
     runs-on: self-hosted
