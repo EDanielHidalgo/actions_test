@@ -81,6 +81,7 @@ jobs:
         run: docker run --name health_checker --network python-ngnix-network server_health_checker
 
       - name: Check results
+        if: ${{ failure() }}
         run: |
           EXIT_CODE=$(docker inspect health_checker | grep "ExitCode")
           echo "Exit Code: $EXIT_CODE"
@@ -98,7 +99,7 @@ jobs:
 
   tear-down-webserver:
     runs-on: self-hosted
-    needs: run-health-check
+    needs: [run-health-check, run-health-check-on-fail]
     if: ${{ always() }}
     steps:
       - name: Tear down webserver
