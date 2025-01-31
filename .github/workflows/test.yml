@@ -14,7 +14,7 @@ jobs:
           chmod +x check_health_check_container.sh
           ./check_health_check_container.sh
 
-          if [[ "${{ env.HEALTH_CHECKER_EXISTS }}" == 'true' ]]; then
+          if [[ "${{ steps.check_health_checker_exists.outputs.health_checker_container_exists }}" == 'true' ]]; then
             docker stop server_health_checker && docker rm server_health_checker
           fi
         # id: health_checker_exists
@@ -35,13 +35,23 @@ jobs:
     runs-on: self-hosted 
 
     steps:
-      - name: Web server container exists
-        id: webserver_exists
-        run: chmod +x check_server_container.sh && ./check_server_container.sh
+      - name: Check and destroy webserver container
+        run: |
+          chmod +x check_server_container.sh
+          ./check_server_container.sh
 
-        if: steps.webserver_exists.outputs.exists == 'true'
-      - name: Destroy webserver container
-        run: docker stop webserver && docker rm webserver
+          if [[ "${{ steps.check_server_container.outputs.webserver_container_exists }}" == 'true' ]]; then
+          # if [[ "${{ env.HEALTH_CHECKER_EXISTS }}" == 'true' ]]; then
+            docker stop webserver && docker rm webserver
+          fi
+
+      # - name: Web server container exists
+      #   id: webserver_exists
+      #   run: chmod +x check_server_container.sh && ./check_server_container.sh
+      #
+      #   if: steps.webserver_exists.outputs.exists == 'true'
+      # - name: Destroy webserver container
+      #   run: docker stop webserver && docker rm webserver
 
   get-source:
     runs-on: self-hosted 
