@@ -89,6 +89,7 @@ jobs:
   tear-down-health-checker:
     runs-on: self-hosted
     needs: run-health-check
+    if: ${{ always() }}
     steps:
       - name: Tear down health checker
         run: |
@@ -98,6 +99,7 @@ jobs:
   tear-down-webserver:
     runs-on: self-hosted
     needs: run-health-check
+    if: ${{ always() }}
     steps:
       - name: Tear down webserver
         run: |
