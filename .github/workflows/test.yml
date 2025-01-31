@@ -40,8 +40,8 @@ jobs:
 
         if: steps.network_check.outputs.exists == 'false'
       - name: Create Docker network
-        run: echo "No such server" && docker network create python-ngnix-network
-
+        run: echo "No such server" && docker network rm python-ngnix-network && docker network create python-ngnix-network
+# docker stop web_server && docker rm web_server
 
 
   build-python-image:
