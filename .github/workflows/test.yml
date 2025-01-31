@@ -38,10 +38,10 @@ jobs:
 
     steps:
       - name: Make script executable
-        id: network_check
         run: chmod +x docker_network_exists.sh
 
       - name: Check if network exists
+        id: network_check
         run: ./docker_network_exists.sh
 
         if: steps.network_check.outputs.exists == 'true'
