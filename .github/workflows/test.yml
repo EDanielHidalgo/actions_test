@@ -34,19 +34,19 @@ jobs:
       - name: Check if network exists
         run: ./docker_network_exists.sh
 
-      - name: Reset Docker network
         if: steps.network_check.outputs.exists == 'true'
-        run: echo "It exists" && docker network create python-ngnix-network
+      - name: Reset Docker network
+        run: echo "It exists" # && docker network create python-ngnix-network
 
-      - name: Create Docker network
         if: steps.network_check.outputs.exists == 'false'
+      - name: Create Docker network
         run: echo "No such server" && docker network create python-ngnix-network
 
 
 
   build-python-image:
     runs-on: self-hosted
-    needs: [get-source, build-network]
+    needs: [get-source, destroy-containers, build-network]
     steps:
       - name: Build Python Docker image
         working-directory: ./app
