@@ -92,7 +92,7 @@ jobs:
       - name: Merge app code
         # if: ${{ steps.check-result.outcome == 'success' }}
         if: ${{ success() }}
-        run: git merge main
+        run: git merge origin/main
 
       # - name: Merge app code on success
       #   if: ${{ success(health-check-result) }}
