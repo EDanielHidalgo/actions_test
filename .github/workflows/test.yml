@@ -18,7 +18,7 @@ jobs:
     needs: get-source
     steps:
       - name: Build Python Docker image
-        working-directory: /app
+        working-directory: ./app
         run: docker build -t gh_action_test . -f ./app/Dockerfile
 
   build-webserver-image:
@@ -26,7 +26,7 @@ jobs:
     needs: get-source
     steps:
       - name: Build nginx Docker image
-        working-directory: /web_server
+        working-directory: ./web_server
 
         run: docker build -t gh_action_test . -f ./web_server/Dockerfile
 
