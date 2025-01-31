@@ -1,5 +1,5 @@
  if docker network inspect python-ngnix-network > /dev/null 2>&1; then
-	 echo "::set-output name=exists::true"
+	 echo "{docker_server_exists}={true}" >> $GITHUB_OUTPUT
  else
-	 echo "::set-output name=exists::false"
+	 echo "{docker_server_exists}={false}" >> $GITHUB_OUTPUT
  fi

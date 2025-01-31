@@ -15,7 +15,6 @@ jobs:
 
   build-network:
     runs-on: self-hosted
-    # needs: [build-python-image, build-webserver-image]
 
     steps:
       - name: Make script executable
@@ -26,6 +25,10 @@ jobs:
         run: ./docker_network_exists.sh
 
       - name: Create Docker network
+        if: steps.network_check.outputs.exists == 'false'
+        run: docker network create python-ngnix-network
+
+      - name: Reset Docker network
         if: steps.network_check.outputs.exists == 'false'
         run: docker network create python-ngnix-network
 
@@ -76,7 +79,7 @@ jobs:
 
   run-health-check:
     runs-on: self-hosted
-    needs: run-webserver
+    needs: [build-python-image, run-webserver]
 
     steps:
       - name: Run health check
