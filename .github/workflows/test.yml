@@ -72,24 +72,34 @@ jobs:
       - name: Check results
         run: docker inspect health_checker | grep "ExitCode"
 
-  run-health-check-on-fail:
+  run-health-check-testing-branch:
     runs-on: self-hosted
     needs: [build-server-health-checker, run-webserver]
     if: github.ref == 'refs/heads/testing'
     steps:
       - name: Run health check
         run: docker run --name health_checker --network python-ngnix-network server_health_checker
+        id: health-check-result
 
-      - name: Check results
-        if: ${{ failure() }}
+
+      - name: Check health check result
+        id: check-result
         run: |
-          EXIT_CODE=$(docker inspect health_checker | grep "ExitCode")
-          echo "Exit Code: $EXIT_CODE"
-        # id: on-fail-result
+          if [ $? -ne 0 ]; then
+          echo "Health check failed."
+          exit 1
+        fi
+
+      - name: Merge app code on success
+        if: ${{ steps.check-result.outcome == 'success' }}
+        run: git merge main
+
+      # - name: Merge app code on success
+      #   if: ${{ success(health-check-result) }}
 
   tear-down-health-checker:
     runs-on: self-hosted
-    needs: run-health-check
+    needs: [run-health-check, run-health-check-testing-branch]
     if: ${{ always() }}
     steps:
       - name: Tear down health checker
@@ -99,7 +109,7 @@ jobs:
 
   tear-down-webserver:
     runs-on: self-hosted
-    needs: [run-health-check, run-health-check-on-fail]
+    needs: [run-health-check, run-health-check-testing-branch]
     if: ${{ always() }}
     steps:
       - name: Tear down webserver
