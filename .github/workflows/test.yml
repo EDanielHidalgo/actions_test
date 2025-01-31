@@ -9,133 +9,60 @@ jobs:
   reset-health-checker:
     runs-on: self-hosted
     steps:
-      - name: Check and destroy health checker container
+      - name: Reset health checker container
         run: |
-          chmod +x check_health_check_container.sh
-          ./check_health_check_container.sh
+          docker stop health_checker || true
+          docker rm health_checker || true
 
-          if [[ "${{ steps.check_health_checker_exists.outputs.health_checker_container_exists }}" == 'true' ]]; then
-            docker stop server_health_checker && docker rm server_health_checker
-          fi
-        # id: health_checker_exists
-
-  # reset-health-checker:
-  #   runs-on: self-hosted 
-  #
-  #   steps:
-  #     - name: Health checker container exists
-  #       id: health_checker_exists
-  #       run: chmod +x check_health_check_container.sh && ./check_health_check_container.sh
-  #
-  #       if: steps.health_checker_exists.outputs.exists == 'true'
-  #     - name: Destroy health checker container
-  #       run: docker stop server_health_checker && docker rm server_health_checker
-  #
   reset-webserver:
-    runs-on: self-hosted 
-
+    runs-on: self-hosted
     steps:
-      - name: Check and destroy webserver container
+      - name: Reset webserver container
         run: |
-          chmod +x check_server_container.sh
-          ./check_server_container.sh
+          docker stop webserver || true
+          docker rm webserver || true
 
-          if [[ "${{ steps.check_server_container.outputs.webserver_container_exists }}" == 'true' ]]; then
-          # if [[ "${{ env.HEALTH_CHECKER_EXISTS }}" == 'true' ]]; then
-            echo "Deleting webserver"
-            docker stop webserver && docker rm webserver
-          else
-            echo "Webserver does not exist"
-          fi
-
-      # - name: Web server container exists
-      #   id: webserver_exists
-      #   run: chmod +x check_server_container.sh && ./check_server_container.sh
-      #
-      #   if: steps.webserver_exists.outputs.exists == 'true'
-      # - name: Destroy webserver container
-      #   run: docker stop webserver && docker rm webserver
+  reset-network:
+    runs-on: self-hosted
+    steps:
+      - name: Reset network
+        run: |
+          docker network rm python-ngnix-network || true
+          docker network create python-ngnix-network
 
   get-source:
-    runs-on: self-hosted 
-    needs: [reset-health-checker, reset-webserver]
-
+    runs-on: self-hosted
+    needs: [reset-health-checker, reset-webserver, reset-network]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-  # reset-containers:
-
-  build-network:
+  build-server-health-checker:
     runs-on: self-hosted
-    needs: [reset-health-checker, reset-webserver]
-
+    needs: get-source
     steps:
-      - name: Make script executable
-        run: chmod +x docker_network_exists.sh
-
-      - name: Check if network exists
-        id: network_check
-        run: ./docker_network_exists.sh
-
-        if: steps.network_check.outputs.exists == 'true'
-      - name: Reset Docker network
-        run: echo "It exists" # && docker network create python-ngnix-network
-
-        if: steps.network_check.outputs.exists == 'false'
-      - name: Create Docker network
-        run: echo "No such server" && docker network rm python-ngnix-network && docker network create python-ngnix-network
-# docker stop web_server && docker rm web_server
-
-
-  build-python-image:
-    runs-on: self-hosted
-    needs: [get-source, build-network]
-    steps:
-      - name: Build Python Docker image
+      - name: Build health checker image
         working-directory: ./app
         run: docker build -t server_health_checker .
 
   build-webserver-image:
     runs-on: self-hosted
-    needs: [get-source, build-network]
+    needs: get-source
     steps:
-      - name: Build nginx Docker image
+      - name: Build webserver image
         working-directory: ./web_server
         run: docker build -t web_server .
-
-  # check-for-network:
-  #   runs-on: self-hosted
-  #   needs: [build-python-image, build-webserver-image]
-  #
-  #   steps:
-  #     - name: Make script executable
-  #       id: network_check
-  #       run: chmod +x docker_network_exists.sh
-  #
-  #     - name: Check if network exists
-  #       run: ./docker_network_exists.sh
-  #
-  # build-network:
-  #   runs-on: self-hosted
-  #   needs: [check-for-network]
-  #
-  #   steps:
-  #     - name: Build Docker network
-  #       run: docker network create python-ngnix-network
 
   run-webserver:
     runs-on: self-hosted
     needs: build-webserver-image
-
     steps:
       - name: Run webserver
         run: docker run -d --name webserver --network python-ngnix-network web_server
 
   run-health-check:
     runs-on: self-hosted
-    needs: [build-python-image, run-webserver]
-
+    needs: [build-server-health-checker, run-webserver]
     steps:
       - name: Run health check
         run: docker run --name health_checker --network python-ngnix-network server_health_checker
@@ -143,27 +70,20 @@ jobs:
       - name: Check results
         run: docker inspect health_checker | grep "ExitCode"
 
-  tear-down-server:
-    runs-on: self-hosted
-    needs: run-health-check
-
-    steps:
-      - name: Tear down server
-        run: docker stop web_server && docker rm web_server
-
   tear-down-health-checker:
     runs-on: self-hosted
     needs: run-health-check
-
     steps:
       - name: Tear down health checker
-        run: docker stop health_checker && docker rm health_checker
+        run: |
+          docker stop health_checker || true
+          docker rm health_checker || true
 
-      # - name: Run container
-      #   id: run_test
-      #   run: docker run gh_action_test
-      #
-      # - name: Check results
-      #   if: steps.run_test.outcome != 'success'
-      #   run: exit 1
-# docker run --name checker --network test-network web_server_checker
+  tear-down-webserver:
+    runs-on: self-hosted
+    needs: run-health-check
+    steps:
+      - name: Tear down webserver
+        run: |
+          docker stop webserver || true
+          docker rm webserver || true
