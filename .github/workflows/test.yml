@@ -81,17 +81,17 @@ jobs:
         run: docker run --name health_checker --network python-ngnix-network server_health_checker
         id: health-check-result
 
+      # - name: Check health check result
+      #   id: check-result
+      #   run: |
+      #     if [ $? -ne 0 ]; then
+      #       echo "Health check failed."
+      #       exit 1
+      #     fi
 
-      - name: Check health check result
-        id: check-result
-        run: |
-          if [ $? -ne 0 ]; then
-            echo "Health check failed."
-            exit 1
-          fi
-
-      - name: Merge app code on success
-        if: ${{ steps.check-result.outcome == 'success' }}
+      - name: Merge app code
+        # if: ${{ steps.check-result.outcome == 'success' }}
+        if: ${{ success() }}
         run: git merge main
 
       # - name: Merge app code on success
