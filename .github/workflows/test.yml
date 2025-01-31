@@ -138,7 +138,7 @@ jobs:
         run: docker run --name health_checker --network python-ngnix-network server_health_checker
 
       - name: Check results
-        run: docker inspect checker | grep "ExitCode"
+        run: docker inspect health_checker | grep "ExitCode"
 
   tear-down-server:
     runs-on: self-hosted
