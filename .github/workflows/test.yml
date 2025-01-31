@@ -7,17 +7,30 @@ on:
 
 jobs:
   reset-health-checker:
-    runs-on: self-hosted 
-
+    runs-on: self-hosted
     steps:
-      - name: Health checker container exists
-        id: health_checker_exists
-        run: chmod +x check_health_check_container.sh && ./check_health_check_container.sh
+      - name: Check and destroy health checker container
+        run: |
+          chmod +x check_health_check_container.sh
+          ./check_health_check_container.sh
 
-        if: steps.health_checker_exists.outputs.exists == 'true'
-      - name: Destroy health checker container
-        run: docker stop server_health_checker && docker rm server_health_checker
+          if [[ "${{ env.HEALTH_CHECKER_EXISTS }}" == 'true' ]]; then
+            docker stop server_health_checker && docker rm server_health_checker
+          fi
+        # id: health_checker_exists
 
+  # reset-health-checker:
+  #   runs-on: self-hosted 
+  #
+  #   steps:
+  #     - name: Health checker container exists
+  #       id: health_checker_exists
+  #       run: chmod +x check_health_check_container.sh && ./check_health_check_container.sh
+  #
+  #       if: steps.health_checker_exists.outputs.exists == 'true'
+  #     - name: Destroy health checker container
+  #       run: docker stop server_health_checker && docker rm server_health_checker
+  #
   reset-webserver:
     runs-on: self-hosted 
 
