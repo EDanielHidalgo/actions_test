@@ -31,7 +31,7 @@ jobs:
 
   run-checker:
     runs-on: self-hosted
-    needs: ...
+    # needs: ...
 
     steps:
       - name: Run check
