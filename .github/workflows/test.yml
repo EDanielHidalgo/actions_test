@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Build Python Docker image
         working-directory: ./app
-        run: docker build -t web_checker .
+        run: docker build -t server_health_checker .
 
   build-webserver-image:
     runs-on: self-hosted
@@ -29,13 +29,48 @@ jobs:
         working-directory: ./web_server
         run: docker build -t web_server .
 
-  run-checker:
+  build-network:
     runs-on: self-hosted
     needs: [build-python-image, build-webserver-image]
 
     steps:
-      - name: Run check
-        run: docker run web_checker
+      - name: Build Docker network
+        run: docker network create python-ngnix-network
+
+  run-webserver:
+    runs-on: self-hosted
+    needs: build-network
+
+    steps:
+      - name: Run webserver
+        run: docker run --name webserver --network python-nginx-network web_server
+
+  run-health-check:
+    runs-on: self-hosted
+    needs: run-webserver
+
+    steps:
+      - name: Run health check
+        run: docker run --name health_checker --network python-nginx-network server_health_checker
+
+      - name: Check results
+        run: docker inspect checker | grep "ExitCode"
+
+  tear-down-server:
+    runs-on: self-hosted
+    needs: run-health-check
+
+    steps:
+      - name: Tear down server
+        run: docker stop web_server && docker rm web_server
+
+  tear-down-health-checker:
+    runs-on: self-hosted
+    needs: run-health-check
+
+    steps:
+      - name: Tear down health checker
+        run: docker stop health_checker && docker rm health_checker
 
       # - name: Run container
       #   id: run_test
@@ -44,3 +79,4 @@ jobs:
       # - name: Check results
       #   if: steps.run_test.outcome != 'success'
       #   run: exit 1
+# docker run --name checker --network test-network web_server_checker
