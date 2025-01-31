@@ -19,11 +19,11 @@ jobs:
     steps:
       - name: Web server container exists
         id: webserver_exists
-        run: ./check_server_container.sh
+        run: chmod +x check_server_container.sh && ./check_server_container.sh
 
       - name: Health checker container exists
         id: health_checker_exists
-        run: ./check_health_check_container.sh
+        run: chmod +x check_health_check_container.sh && ./check_health_check_container.sh
 
         if: steps.webserver_exists.outputs.exists == 'true'
       - name: Destroy webserver container
