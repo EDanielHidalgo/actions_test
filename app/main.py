@@ -6,7 +6,7 @@ def query_webserver():
 
     # assert res.status_code == 200
 
-    exit(0) if res.status_code != 200 else exit(1)
+    exit(0) if res.status_code == 200 else exit(1)
 
 
 def return_failure():
