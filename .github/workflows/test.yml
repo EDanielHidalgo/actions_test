@@ -31,7 +31,7 @@ jobs:
 
   run-checker:
     runs-on: self-hosted
-    # needs: ...
+    needs: [build-python-image, build-webserver-image]
 
     steps:
       - name: Run check
