@@ -18,14 +18,14 @@ jobs:
     needs: get-source
     steps:
       - name: Build Python Docker image
-        run: docker build -t gh_action_test . -f /app/Dockerfile
+        run: docker build -t gh_action_test . -f ./app/Dockerfile
 
   build-webserver-image:
     runs-on: self-hosted
     needs: get-source
     steps:
       - name: Build nginx Docker image
-        run: docker build -t gh_action_test . -f /web_server/Dockerfile
+        run: docker build -t gh_action_test . -f ./web_server/Dockerfile
       # - name: Run container
       #   id: run_test
       #   run: docker run gh_action_test
