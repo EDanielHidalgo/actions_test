@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - testing
 
 jobs:
   reset-health-checker:
@@ -63,12 +64,27 @@ jobs:
   run-health-check:
     runs-on: self-hosted
     needs: [build-server-health-checker, run-webserver]
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Run health check
         run: docker run --name health_checker --network python-ngnix-network server_health_checker
 
       - name: Check results
         run: docker inspect health_checker | grep "ExitCode"
+
+  run-health-check-on-fail:
+    runs-on: self-hosted
+    needs: [build-server-health-checker, run-webserver]
+    if: github.ref == 'refs/heads/testing'
+    steps:
+      - name: Run health check
+        run: docker run --name health_checker --network python-ngnix-network server_health_checker
+
+      - name: Check results
+        run: |
+          EXIT_CODE=$(docker inspect health_checker | grep "ExitCode")
+          echo "Exit Code: $EXIT_CODE"
+        # id: on-fail-result
 
   tear-down-health-checker:
     runs-on: self-hosted
