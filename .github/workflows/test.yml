@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Build Python Docker image
         working-directory: ./app
-        run: docker build -t gh_action_test . # -f ./app/Dockerfile
+        run: docker build -t web_checker .
 
   build-webserver-image:
     runs-on: self-hosted
@@ -27,8 +27,15 @@ jobs:
     steps:
       - name: Build nginx Docker image
         working-directory: ./web_server
+        run: docker build -t web_server .
 
-        run: docker build -t gh_action_test . # -f ./web_server/Dockerfile
+  run-checker:
+    runs-on: self-hosted
+    needs: ...
+
+    steps:
+      - name: Run check
+        run: docker run web_checker
 
       # - name: Run container
       #   id: run_test
