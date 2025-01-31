@@ -42,7 +42,7 @@ jobs:
 
   build-network:
     runs-on: self-hosted
-    meeds: [reset-health-checker, reset-webserver]
+    needs: [reset-health-checker, reset-webserver]
 
     steps:
       - name: Make script executable
