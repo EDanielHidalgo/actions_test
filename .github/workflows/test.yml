@@ -43,7 +43,7 @@ jobs:
 
     steps:
       - name: Run webserver
-        run: docker run --name webserver --network python-nginx-network web_server
+        run: docker run --name webserver --network python-ngnix-network web_server
 
   run-health-check:
     runs-on: self-hosted
@@ -51,7 +51,7 @@ jobs:
 
     steps:
       - name: Run health check
-        run: docker run --name health_checker --network python-nginx-network server_health_checker
+        run: docker run --name health_checker --network python-ngnix-network server_health_checker
 
       - name: Check results
         run: docker inspect checker | grep "ExitCode"
