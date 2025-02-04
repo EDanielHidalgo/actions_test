@@ -24,7 +24,10 @@ jobs:
         with:
           name: terraform-artifacts
           path: ./terraform/.terraform
-          if-no-files: error
+          if-no-files-found: error
+
+      - name: List directories
+        run: ls -a
 
       - name: Terraform plan
         working-directory: ./terraform
