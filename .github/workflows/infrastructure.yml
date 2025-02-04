@@ -6,38 +6,30 @@ on:
       - terraform
 
 jobs:
-  build-infrastructure:
+  init-infrastructure:
     runs-on: self-hosted
 
     steps:
       - name: Get sources
         uses: actions/checkout@v3
 
-  run-failure:
-    runs-on: self-hosted
-    needs: build-infrastructure
-
-    steps:
-      - name: Terraform init - FAIL
-        working-directory: ./tf_fail
-        run: terraform init
-
-      - name: Terraform apply - FAIL
-        working-directory: ./tf_fail
-        # uses: hashicorp/terraform-github-actions@v2
-        run: terraform apply -auto-approve
-
-  run-success:
-    runs-on: self-hosted
-    needs: run-failure
-
-    if: ${{ failure() }}
-
-    steps:
-      - name: Terraform init - PASS
+      - name: Terraform init
         working-directory: ./tf_pass
         run: terraform init
 
+      - name: Cache init file
+        uses: actions/cache@v4
+        working-directory: ./tf_pass
+        with:
+          path: .terraform
+          key: ${{ runner.os }}-terraform-${{ hashFiles('.versions.tf') }}
+          restore-keys: ${{ runner.os }}-terraform-
+
+  run-success:
+    runs-on: self-hosted
+    needs: init-infrastructure
+
+    steps:
       - name: Terraform apply - PASS
         working-directory: ./tf_pass
         run: terraform apply -auto-approve
