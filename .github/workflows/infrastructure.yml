@@ -22,7 +22,7 @@ jobs:
         # working-directory: ./tf_pass
         with:
           path: ./tf_pass/.terraform
-          key: ${{ runner.os }}-terraform-${{ hashFiles('./tf_pass/versions.tf', './tf_pass/*.tf) }}
+          key: ${{ runner.os }}-terraform-${{ hashFiles('./tf_pass/versions.tf', './tf_pass/*.tf') }}
           restore-keys: ${{ runner.os }}-terraform-
 
   run-success:
