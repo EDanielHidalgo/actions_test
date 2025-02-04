@@ -2,6 +2,8 @@ name: Terraform Workflow
 
 on:
   push:
+    branches:
+      - terraform
     paths:
       - '*.tf'
 
