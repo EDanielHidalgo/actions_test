@@ -19,7 +19,6 @@ jobs:
 
       - name: Cache init file
         uses: actions/cache@v4
-        # working-directory: ./tf_pass
         with:
           path: ./tf_pass/.terraform
           key: ${{ runner.os }}-terraform-${{ hashFiles('./tf_pass/versions.tf', './tf_pass/*.tf') }}
@@ -40,35 +39,3 @@ jobs:
       - name: Terraform apply - PASS
         working-directory: ./tf_pass
         run: terraform apply -auto-approve
-
-      # # - name: Run failure
-      # #   run: terraform apply
-      #
-      # - name: Terraform init - PASS
-      
-      #   working-directory: ./tf_pass
-      #   run: terraform init
-      #
-      # - name: Terraform apply - PASS
-      #   needs: 
-      #   working-directory: ./tf_pass
-      #   # uses: hashicorp/terraform-github-actions@v2
-      #   run: terraform apply -auto-approve
-      #
-      # #
-      # # - name: Delete artifacts (???)
-      # #   run: terraform apply
-
-
-
-
-      # - name: Terraform init
-      #   run: terraform init
-
-      # - name: Upload Terraform artifacts
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: terraform-artifacts
-      #     path: .terraform
-      #     if-no-files-found: error
-      #     include-hidden-files: true
