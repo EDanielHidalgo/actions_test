@@ -1,0 +1,13 @@
+name: Terraform Workflow
+
+on:
+  push:
+    paths:
+      - '*.tf'
+
+jobs:
+  build-infrastructure:
+    runs-on: self-hosted
+    steps:
+      - name: Run failure
+        run: terraform apply
