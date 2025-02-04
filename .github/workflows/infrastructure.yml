@@ -10,10 +10,13 @@ on:
 jobs:
   build-infrastructure:
     runs-on: self-hosted
+
     steps:
+      - name: Get sources
+        uses: actions/checkout@v3
+
       - name: Initialize TF
         run: terraform init
-
 
       - name: Make plan
         run: terraform plan
