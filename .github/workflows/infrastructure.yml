@@ -26,12 +26,27 @@ jobs:
         working-directory: ./tf_fail
         # uses: hashicorp/terraform-github-actions@v2
         run: terraform apply -auto-approve
-      # #
+
+  run-success:
+    runs-on: self-hosted
+    needs: run-failure
+
+    if: ${{ failure() }}
+
+    steps:
+      - name: Terraform init - PASS
+        working-directory: ./tf_pass
+        run: terraform init
+
+      - name: Terraform apply - PASS
+        working-directory: ./tf_pass
+        run: terraform apply -auto-approve
+
       # # - name: Run failure
       # #   run: terraform apply
       #
       # - name: Terraform init - PASS
-      #   if: ${{ failure() }}
+      
       #   working-directory: ./tf_pass
       #   run: terraform init
       #
