@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - terraform
-    paths:
-      - '*.tf'
+    # paths:
+    #   - '*.tf'
 
 jobs:
   build-infrastructure:
