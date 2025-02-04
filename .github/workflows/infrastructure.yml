@@ -38,6 +38,16 @@ jobs:
       # - name: Run failure
       #   run: terraform apply
 
+      - name: Terraform init - PASS
+        if: ${{ failure() }}
+        working-directory: ./tf_pass
+        run: terraform init
+
+      - name: Terraform apply - PASS
+        working-directory: ./tf_pass
+        # uses: hashicorp/terraform-github-actions@v2
+        run: terraform apply -auto-approve
+
       #
       # - name: Delete artifacts (???)
       #   run: terraform apply
