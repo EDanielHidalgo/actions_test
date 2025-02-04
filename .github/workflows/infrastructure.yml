@@ -37,7 +37,6 @@ jobs:
           key: ${{ runner.os }}-terraform-${{ hashFiles('./tf_pass/versions.tf', './tf_pass/*.tf') }}
           restore-keys: ${{ runner.os }}-terraform-
 
-    steps:
       - name: Terraform apply - PASS
         working-directory: ./tf_pass
         run: terraform apply -auto-approve
