@@ -15,11 +15,17 @@ jobs:
       - name: Get sources
         uses: actions/checkout@v3
 
-      - name: Initialize TF
-        run: terraform init
+      - name: Terraform init (cached)
+        uses: hashicorp/terraform-github-actions@v2
+        with:
+          terraform_wrapper: false
+          actions: init
+        cache: true
 
-      - name: Make plan
-        run: terraform plan
+      - name: Terraform plan
+        uses: hashicorp/terraform-github-actions@v2
+        with:
+          actions: plan
       #
       # - name: Run failure
       #   run: terraform apply
