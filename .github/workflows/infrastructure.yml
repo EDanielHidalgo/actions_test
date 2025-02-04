@@ -20,7 +20,7 @@ jobs:
         run: terraform init
 
       - name: Upload Terraform artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: terraform-artifacts
           path: ./terraform/.terraform
