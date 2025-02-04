@@ -16,7 +16,6 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Terraform init
-        # working-directory: ./terraform
         run: terraform init
 
       - name: List directories
@@ -30,10 +29,10 @@ jobs:
           if-no-files-found: error
           include-hidden-files: true
 
-      - name: Terraform plan
+      - name: Terraform apply
         # working-directory: ./terraform
         # uses: hashicorp/terraform-github-actions@v2
-        run: terraform plan
+        run: terraform apply
       #
       # - name: Run failure
       #   run: terraform apply
