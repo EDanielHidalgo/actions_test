@@ -9,5 +9,16 @@ jobs:
   build-infrastructure:
     runs-on: self-hosted
     steps:
-      - name: Run failure
-        run: terraform apply
+      - name: Initialize TF
+        run: terraform init
+
+
+      - name: Make plan
+        run: terraform plan
+      #
+      # - name: Run failure
+      #   run: terraform apply
+
+      #
+      # - name: Delete artifacts (???)
+      #   run: terraform apply
