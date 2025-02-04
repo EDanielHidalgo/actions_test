@@ -1,6 +1,6 @@
 provider "null" {}
 
-resource "null_resource" "always_fail" {
+resource "null_resource" "always_pass" {
   count = 1
 
   provisioner "local-exec" {

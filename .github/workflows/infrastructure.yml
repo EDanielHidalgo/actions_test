@@ -29,8 +29,8 @@ jobs:
           if-no-files-found: error
           include-hidden-files: true
 
-      - name: Terraform apply
-        # working-directory: ./terraform
+      - name: Terraform apply - FAIL
+        working-directory: ./tf_fail
         # uses: hashicorp/terraform-github-actions@v2
         run: terraform apply -auto-approve
       #
