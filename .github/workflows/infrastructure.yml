@@ -28,6 +28,7 @@ jobs:
           name: terraform-artifacts
           path: .terraform
           if-no-files-found: error
+          include-hidden-files: true
 
       - name: Terraform plan
         working-directory: ./terraform
