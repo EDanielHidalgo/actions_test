@@ -19,15 +19,15 @@ jobs:
         # working-directory: ./terraform
         run: terraform init
 
+      - name: List directories
+        run: ls -a
+
       - name: Upload Terraform artifacts
         uses: actions/upload-artifact@v4
         with:
           name: terraform-artifacts
           path: ./terraform
           if-no-files-found: error
-
-      - name: List directories
-        run: ls -a
 
       - name: Terraform plan
         working-directory: ./terraform
