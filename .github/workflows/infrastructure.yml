@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - terraform
-    # paths:
-    #   - '*.tf'
 
 jobs:
   build-infrastructure:
@@ -14,6 +12,41 @@ jobs:
     steps:
       - name: Get sources
         uses: actions/checkout@v3
+
+  run-failure:
+    runs-on: self-hosted
+    needs: build-infrastructure
+
+    steps:
+      - name: Terraform init - FAIL
+        working-directory: ./tf_fail
+        run: terraform init
+
+      - name: Terraform apply - FAIL
+        working-directory: ./tf_fail
+        # uses: hashicorp/terraform-github-actions@v2
+        run: terraform apply -auto-approve
+      # #
+      # # - name: Run failure
+      # #   run: terraform apply
+      #
+      # - name: Terraform init - PASS
+      #   if: ${{ failure() }}
+      #   working-directory: ./tf_pass
+      #   run: terraform init
+      #
+      # - name: Terraform apply - PASS
+      #   needs: 
+      #   working-directory: ./tf_pass
+      #   # uses: hashicorp/terraform-github-actions@v2
+      #   run: terraform apply -auto-approve
+      #
+      # #
+      # # - name: Delete artifacts (???)
+      # #   run: terraform apply
+
+
+
 
       # - name: Terraform init
       #   run: terraform init
@@ -25,29 +58,3 @@ jobs:
       #     path: .terraform
       #     if-no-files-found: error
       #     include-hidden-files: true
-
-      - name: Terraform init - FAIL
-        working-directory: ./tf_fail
-        run: terraform init
-
-      - name: Terraform apply - FAIL
-        working-directory: ./tf_fail
-        # uses: hashicorp/terraform-github-actions@v2
-        run: terraform apply -auto-approve
-      #
-      # - name: Run failure
-      #   run: terraform apply
-
-      - name: Terraform init - PASS
-        if: ${{ failure() }}
-        working-directory: ./tf_pass
-        run: terraform init
-
-      - name: Terraform apply - PASS
-        working-directory: ./tf_pass
-        # uses: hashicorp/terraform-github-actions@v2
-        run: terraform apply -auto-approve
-
-      #
-      # - name: Delete artifacts (???)
-      #   run: terraform apply
