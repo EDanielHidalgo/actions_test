@@ -32,7 +32,7 @@ jobs:
       - name: Terraform apply
         # working-directory: ./terraform
         # uses: hashicorp/terraform-github-actions@v2
-        run: terraform apply
+        run: terraform apply -auto-approve
       #
       # - name: Run failure
       #   run: terraform apply
