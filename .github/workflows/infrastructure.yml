@@ -15,17 +15,21 @@ jobs:
       - name: Get sources
         uses: actions/checkout@v3
 
-      - name: Terraform init (cached)
-        uses: hashicorp/terraform-github-actions@v2
+      - name: Terraform init
+        working-directory: ./terraform
+        run: terraform init
+
+      - name: Upload Terraform artifacts
+        uses: actions/upload-artifact@v3
         with:
-          terraform_wrapper: false
-          actions: init
-        cache: true
+          name: terraform-artifacts
+          path: ./terraform/.terraform
+          if-no-files: error
 
       - name: Terraform plan
-        uses: hashicorp/terraform-github-actions@v2
-        with:
-          actions: plan
+        working-directory: ./terraform
+        # uses: hashicorp/terraform-github-actions@v2
+        run: terraform plan
       #
       # - name: Run failure
       #   run: terraform apply
