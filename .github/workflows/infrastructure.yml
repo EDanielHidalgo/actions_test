@@ -19,10 +19,10 @@ jobs:
 
       - name: Cache init file
         uses: actions/cache@v4
-        working-directory: ./tf_pass
+        # working-directory: ./tf_pass
         with:
-          path: .terraform
-          key: ${{ runner.os }}-terraform-${{ hashFiles('.versions.tf') }}
+          path: ./tf_pass/.terraform
+          key: ${{ runner.os }}-terraform-${{ hashFiles('./tf_pass/versions.tf') }}
           restore-keys: ${{ runner.os }}-terraform-
 
   run-success:
